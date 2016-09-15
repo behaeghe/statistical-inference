@@ -49,7 +49,10 @@ g + geom_violin(
     xlab("Supplement and Dose") +
     ylab("Length")
 ```
-The following table details the statistics for the data set: 
+The figure illustrates that increasing doses of vitamin C would correspong to 
+longer teeth and that the mean of admistration could impact tooth growth also.
+In the following section we will review some summary statitics that will help define 
+hypothesis that would be statistically evaluated.
 ```{r stats, echo=FALSE}
         tbTooth <- tbl_df(ToothGrowth)
         ToothSummaryAll <- tbTooth %>% 
@@ -85,14 +88,24 @@ The following table details the statistics for the data set:
 *** 
 From Table 1, we can make the observation that tooth length mean varies by supplement type, the mean is greater for OJ. We will test the hypothesis that the mean observed length of OJ is greater than the mean observed length for VC. So, our hypothesis testing should determine if there's a statiscally significant effect of supplement  on tooth length.  
 *** 
+
 ```{r table 1}
 pander(ToothSummarySupp,caption ="Summary statistics for tooth length by supplement",alignment="center") 
 ```
+  
+***    
+Table 2 shows that an increase in dose results in an increase in mean tooth lentgh (larger means as dose increases)  
+***  
 
 ```{r table2}
         names(ToothSummaryDose)[-1] <- c("n","Mean","Std.Dev","Sample Error")
         pander(ToothSummaryDose,caption="Summary statistics for tooth length by dose",alignment="center")
 ```
+
+***  
+ 
+
+***   
 
 ```{r table3}
         names(ToothSummaryAll)[-(1:2)] <- c("n","Mean","Std.Dev","Sample Error")
