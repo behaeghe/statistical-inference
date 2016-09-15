@@ -1,0 +1,100 @@
+---
+title: "StatInference Assignment"
+author: "JRB"
+date: "August 24, 2016"
+output: pdf_document
+---
+#PART 1: Simulation 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr);library(knitr);library(pander)
+panderOptions('digits',2)
+panderOptions('round',2)
+```
+
+````{r simpleSim}
+set.seed(100)
+mns <- NULL
+for (i in 1:1000) mns <- c(mns, mean(rexp(40,0.2)))
+hist(mns)
+abline(v=mean(mns),col="red",lwd=7)
+mean(mns)
+samplevar = sd(mns)
+````
+#PART 2: Basic Inference : The Effect of Vitamin C on Tooth Growth in Guinea Pigs 
+##Introduction
+We propose to analyze the length of odontoblasts for 60 guinea pigs that have received one of three dose levels of Vitamin C by of of two delivery methods (orange juice OJ) or ascorbic acid (VC). We will first perform some exploratory data analysis to generate some hypothesis that we will be statistically tested.
+## Exploratory Data Analysis 
+We fill first plot the data set to represent the density of observations and some key statistics for each combination of delivery method at each dose level. For example, the graph will compare side by side the tooth length at dose level 0.5 mg for both OJ and VC. 
+
+
+```{r load dataset and some basic plotting, echo=FALSE,fig.align='center'}
+data("ToothGrowth")
+
+library(ggplot2)
+g <- ggplot(
+                data=ToothGrowth,
+                aes(x=interaction(supp,dose),y=len)
+                )
+g + geom_violin(
+                aes(fill=supp),
+                scale="area") + 
+    stat_summary(fun.data ="mean_se",
+                 colour="white") + 
+    scale_fill_brewer(palette="Blues") + 
+    theme_minimal() + 
+    geom_boxplot(width=0.1) +
+    ggtitle("Tooth length by dose and supplement") +
+    xlab("Supplement and Dose") +
+    ylab("Length")
+```
+The following table details the statistics for the data set: 
+```{r stats, echo=FALSE}
+        tbTooth <- tbl_df(ToothGrowth)
+        ToothSummaryAll <- tbTooth %>% 
+                        group_by(dose,supp) %>% 
+                        summarise( 
+                                n(),
+                                mn =mean(len),
+                                s=round(sd(len),2),
+                                sem=round(sd(len)/sqrt(n()),2)
+                                )
+        ToothSummaryDose <- tbTooth %>% 
+                        group_by(dose) %>% 
+                        summarise( 
+                                n(),
+                                mn =mean(len),
+                                s=round(sd(len),2),
+                                sem=round(sd(len)/sqrt(n()),2)
+                                )
+    
+```
+
+```{r table1 }
+            ToothSummarySupp <- tbTooth %>% 
+                        group_by(supp) %>% 
+                        summarise( 
+                                n(),
+                                mn =mean(len),
+                                s=round(sd(len),2),
+                                sem=round(sd(len)/sqrt(n()),2)
+                                )
+        names(ToothSummarySupp)[-1] <- c("n","Mean","Std.Dev","Sample Error")
+```
+*** 
+From Table 1, we can make the observation that tooth length mean varies by supplement type, the mean is greater for OJ. We will test the hypothesis that the mean observed length of OJ is greater than the mean observed length for VC. So, our hypothesis testing should determine if there's a statiscally significant effect of supplement  on tooth length.  
+*** 
+```{r table 1}
+pander(ToothSummarySupp,caption ="Summary statistics for tooth length by supplement",alignment="center") 
+```
+
+```{r table2}
+        names(ToothSummaryDose)[-1] <- c("n","Mean","Std.Dev","Sample Error")
+        pander(ToothSummaryDose,caption="Summary statistics for tooth length by dose",alignment="center")
+```
+
+```{r table3}
+        names(ToothSummaryAll)[-(1:2)] <- c("n","Mean","Std.Dev","Sample Error")
+        pander(ToothSummaryAll,caption="Summary Statistics for tooth length by dose and supplement",alignment=c("center"))
+```        

@@ -1,0 +1,15 @@
+---
+title: "Statistical Inference - Week 2"
+author: "JRB"
+date: "July 23, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Notes on Variance
+
+
+

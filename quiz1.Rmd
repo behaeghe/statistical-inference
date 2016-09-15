@@ -1,0 +1,46 @@
+---
+title: "Quz 1"
+author: "JRB"
+date: "July 22, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Question 6 : conditional probability
+A web [site](www.medicine.ox.ac.uk/bandolier/band64/b64-7.html) for home pregnancy tests cites the following: “When the subjects using the test were women who collected and tested their own samples, the overall *sensitivity was 75%*. *Specificity* was also low, in the range *52% to 75%*.” Assume the lower value for the specificity. Suppose a subject has a positive test and that *30% of women taking pregnancy tests are actually pregnant*. What number is closest to the probability of pregnancy given the positive test?
+
+(Hints, watch Lecture 3 at around 7 minutes for a similar example. Also, there's a lot of Bayes' rule problems and descriptions out there, for example here's one for [HIV testing](http://www.statlect.com/bayes_rule.htm). Note, discussions of Bayes' rule can get pretty heady. So if it's new to you, stick to basic treatments of the problem. Also see Chapter 3 Question 5.)
+
+This is solved as such....
+
+first we define A as pregnant and B as positive test
+so P(A|B) probability of subject to be pregnat given a positive test results is expressed by (Bayesian Rule)
+P(A|B) = P(B|A)*P(A)/P(B)
+P(B|A) is the probability of a positive tests given a pregancy
+P(A): is the probability of pregrancy
+P(B): probability of a positive test
+easy stuff first....
+P(B|A) is 30% (see text: 30% of women taking pregnacy tests are actually pregnant)
+P(A) is 72% that's the test sensitivity without any prior
+now the slightly harder stuff...
+P(B) or the probability of a positive test, a positive test could happen whether a woman is pregnant or not...
+so first what is the propability of a positive test for a pregant woman (p1)... It is the probabilty of a positive test while pregnant which is p1= .72 * .3 (sensitivity times underlying population pob of pregnancy given a pos test) now p2 is the probability of a positive test w/o a pregnancy. We need to asses the chance of a false positve (it is the complement of a true negative) for non pregnant woman (the complement of pregnant probability), that is
+p2 = 1-0.52 (false positive prob) * 1-0.3 (proportion of not pregnat women) so we end up with....
+
+```r (0.3*0.72)/((.72*.3)+((1-0.52) * (1-0.3)))```
+##Question 3: Dutch Book Problem
+You are playing a game with a friend where you flip a coin and if it comes up heads you give her X dollars and if it comes up tails she gives you Y dollars. The probability that the coin is heads is p (some number between 0 and 1.) What has to be true about X and Y to make so that both of your expected total earnings is 0. The game would then be called “fair”.
+
+(Hints, look at Lecture 4 from 0 to 6:50 and Chapter 5 Problem 6. Also, for further reading on fair games and gambling, start with the Dutch Book problem ).
+
+X=Y
+Incorrect Response 
+
+p=XY
+
+p1−p=XY
+
+p1−p=YX
