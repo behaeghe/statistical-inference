@@ -1,0 +1,30 @@
+---
+title: 'Part 1: Simple Simulation'
+author: "JRB"
+date: "September 16, 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#PART 1: Simulation 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr);library(knitr);library(pander)
+require(broom);require(stargazer)
+panderOptions('digits',2)
+panderOptions('round',2)
+```
+
+````{r simpleSim, echo=FALSE}
+set.seed(100)
+mns <- NULL
+for (i in 1:1000) mns <- c(mns, mean(rexp(40,0.2)))
+#hist(mns)
+#abline(v=mean(mns),col="red",lwd=7)
+#mean(mns)
+#samplevar = sd(mns)
+````
+_____
