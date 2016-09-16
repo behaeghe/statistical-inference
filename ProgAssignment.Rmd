@@ -157,17 +157,59 @@ Same assumptions as before: unequal variance, group comparison and single sided 
 `r pander(t.test(D2$len,D0.5$len,alternative="greater"))`  
 The t-value ($t_{0.95}$) with `r round(t.test(D2$len,D0.5$len,alternative="greater")$parameter)` degree of freedom is `r round(qt(0.95,t.test(D2$len,D0.5$len,alternative="greater")$parameter),2)`. The test statistics is greater than $t_{0.95}$ so we can safely reject the null hypothesis. We conlcude that tooth length is on average greater for the 2mg dose than for the 0.5 mg dose with a 95% confidence.  
 
-*Test 3: 1 and 2mg*
+*Test 3: 1 and 2mg*  
 $\mu_1$ is the mean of tooth length for the 2 mg group  
 $\mu_2$ is the mean of tooth length for the 0.5 mg group  
-Asumptions:
-        *       unequal variance  
-        *       group comparison  
-        *       ingle sided test  
-**Alternate hypothesis:** the 2mg dose group mean tooth lenght is greater that the 1mg dose group mean tooth length.  
+Asumptions:  
+        * unequal variance  
+        * group comparison  
+        * single sided test  
+**Alternate hypothesis:** the 2mg dose group mean tooth lenght is greater that the 1mg dose group mean tooth length.    
 `r pander(t.test(D2$len,D1$len,alternative="greater"))`  
 The t-value ($t_{0.95}$) with `r round(t.test(D2$len,D1$len,alternative="greater")$parameter)` degree of freedom is `r round(qt(0.95,t.test(D2$len,D1$len,alternative="greater")$parameter),2)`. The test statistics is greater than $t_{0.95}$ so we can safely reject the null hypothesis. We conlcude that tooth length is on average greater for the 2mg dose than for the 1mg dose with a 95% confidence.  
+###Hypothesis #2: Mean of delivery has an impact on tooth growth
+*Test 1: Impact on tooth growth by mean of delivery across all dose groups*
+$\mu_1$ is the mean of tooth length for the OJ group  
+$\mu_2$ is the mean of tooth length for the VC group  
 
+$H_0: \mu_1=\mu_2$
+$H_3: \mu_1>\mu_2$  
+```{r t.test len ~ supp, echo=FALSE}
+        testlenbysupp <- t.test(data=ToothGrowth,len ~ supp,alternative="greater")
+```
+`r pander(testlenbysupp)`  
 
+The t-value ($t_{0_95}$) with `r testlenbysupp$paramter` degree of freedom is `r qt(0.95,testlenbysupp$parameter)`. The $t_{0.95}$ value is greater than the test statistics so we can't reject the null hypothesis. There's no difference in mean for tooth length by mean of administration across dose groups.  
+***Conclusion*** When analyzed across dose groups the mean of administration doesn't have an impact on tooth growth. We will now refine our analysis and look at the tooth length mean differences at each dose level comparing the two means of administration.  
 
+*Mean of admistration impact at 0.5 mg*
+$\mu_1$ is the mean of tooth length for the OJ group at the analysed dose level  
+$\mu_2$ is the mean of tooth length for the VC group at the analysed dose level 
 
+$H_0: \mu_1=\mu_2$
+$H_3: \mu_1>\mu_2$    
+
+```{r t.test len ~supp @ 0.5mg, echo=FALSE}
+        res0.5 <- t.test(data=D0.5,len ~ supp,alternative="greater")
+```
+
+`r pander(res0.5)`  
+
+The t-value ($t_{0_95}$) with `r res0.5$paramter` degree of freedom is `r qt(0.95,res0.5$parameter)`. The $t_{0.95}$ value is lower than the test statistics so we can reject the null hypothesis. There's a difference in mean for toothength by mean of administration at the 0.5 mg dose level.  
+***Conclusion*** At the 0.5mg dose level, OJ has a greater mean tooth length than VC. At this dose level the mode of administration has an impact on tooth growth.  
+
+*Mean of admistration impact at 1mg*
+$\mu_1$ is the mean of tooth length for the OJ group at the analysed dose level  
+$\mu_2$ is the mean of tooth length for the VC group at the analysed dose level 
+
+$H_0: \mu_1=\mu_2$
+$H_3: \mu_1>\mu_2$    
+
+```{r t.test len ~supp @ 1mg, echo=FALSE}
+        res1 <- t.test(data=D1,len ~ supp,alternative="greater")
+```
+
+`r pander(res0.5)`  
+
+The t-value ($t_{0_95}$) with `r res1$paramter` degree of freedom is `r qt(0.95,res1$parameter)`. The $t_{0.95}$ value is lower than the test statistics so we can reject the null hypothesis. There's a difference in mean for toothength by mean of administration at the 1 mg dose level.  
+***Conclusion*** At the 1mg dose level, OJ has a greater mean tooth length than VC. At this dose level the mode of administration has an impact on tooth growth.  
