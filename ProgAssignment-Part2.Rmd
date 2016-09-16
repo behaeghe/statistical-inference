@@ -1,11 +1,11 @@
 ---
-title: "Coursera Statistical Inference Assignment"
+title: "The Effect of Vitamin C on Tooth Growth in Guinea Pigs"
 author: "JRB"
 date: "September 16, 2016"
 output: pdf_document
 geometry: margin=1in
+fontsize: 8pt
 ---
-#PART 1: Simulation 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -15,26 +15,15 @@ panderOptions('digits',2)
 panderOptions('round',2)
 ```
 
-````{r simpleSim, echo=FALSE}
-set.seed(100)
-mns <- NULL
-for (i in 1:1000) mns <- c(mns, mean(rexp(40,0.2)))
-#hist(mns)
-#abline(v=mean(mns),col="red",lwd=7)
-#mean(mns)
-#samplevar = sd(mns)
-````
-_____
-#PART 2: Basic Inference : The Effect of Vitamin C on Tooth Growth in Guinea Pigs 
 ##Introduction
 We propose to analyze the length of odontoblasts for 60 guinea pigs that have received one of three dose levels of Vitamin C by of of two delivery methods (orange juice OJ) or ascorbic acid (VC). We will first perform some exploratory data analysis to generate some hypothesis that we will be statistically tested.  
 
 ##Exploratory Data Analysis 
-###Graphical Analysis
+
 We fill first plot the data set to represent the density of observations and some key statistics for each combination of delivery method at each dose level. The graph will compare side by side the tooth length for dose level for both OJ and VC. 
 
 
-```{r load dataset and some basic plotting, echo=FALSE,fig.align='center'}
+```{r load dataset and some basic plotting, echo=FALSE,fig.align='center',fig.height=4, fig.width=6}
 data("ToothGrowth")
 
 library(ggplot2)
@@ -54,10 +43,9 @@ g + geom_violin(
     xlab("Supplement and Dose") +
     ylab("Length")
 ```
-The figure illustrates that increasing doses of vitamin C would correspong to 
+The figure illustrates that increasing doses of vitamin C would correspond to 
 longer teeth and that the mean of admistration could impact tooth growth also.
-In the following section we will review some summary statitics that will help define 
-hypothesis that would be statistically evaluated.
+Table 1 provides a summary of the `ToothGrowth` data set.
 ```{r stats, echo=FALSE}
         tbTooth <- tbl_df(ToothGrowth)
         ToothSummaryAll <- tbTooth %>% 
@@ -79,7 +67,6 @@ hypothesis that would be statistically evaluated.
     
 ```
   
-##Summary statistics and hypothesis generation
   
 ```{r table1 }
             ToothSummarySupp <- tbTooth %>% 
@@ -93,28 +80,12 @@ hypothesis that would be statistically evaluated.
         names(ToothSummarySupp)[-1] <- c("n","Mean","Std.Dev","Sample Error")
 ```
 
-From Table 1, we can make the observation that tooth length mean varies by supplement type, the mean is greater for OJ. We will test the hypothesis that the mean observed length of OJ is greater than the mean observed length for VC. So, our hypothesis testing should determine if there's a statistically significant effect of supplement  on tooth length.  
-***
 
-```{r table 1}
-pander(ToothSummarySupp,caption ="Summary statistics for tooth length by supplement",alignment="center") 
-```
-  
-***    
-Table 2 shows that an increase in dose results in an increase in mean tooth lentgh (larger means as dose increases)  
+From the summary table we can formulate the following hypothesis that could be submitted to a statistical testing.
+The hypothesis are:  
 
-***  
-
-```{r table2}
-        names(ToothSummaryDose)[-1] <- c("n","Mean","Std.Dev","Sample Error")
-        pander(ToothSummaryDose,caption="Summary statistics for tooth length by dose",alignment="center")
-```
-
-***  
-From Table 3 we can formulate the assumption that the mean tooth length is larger at dose levels 0.5 and 1 mg 
-for Orange Juice (OJ) compared to ascorbic acid (VC) but about the same for OJ and VC at dose leve of 2mg
-
-***   
+#. Tooth length increases as dose increases
+#. Mean of delivery has an impact on tooth growth 
 
 ```{r table3}
         names(ToothSummaryAll)[-(1:2)] <- c("n","Mean","Std.Dev","Sample Error")
@@ -126,9 +97,10 @@ for Orange Juice (OJ) compared to ascorbic acid (VC) but about the same for OJ a
 We have generated three hypothesis that we would like to test againts the null hypothesis. 
 
 ###Hypothesis 1:  "Tooth length increases as dose increases"  
-To test this hypothesis, we will compare tooth length means at different dose levels (regardless of mean of administration).We will test the null hypothesis that the samples are drawn from populations of the same mean.
+To test this hypothesis, we will compare tooth length means at different dose levels (regardless of mean of administration). We will test the null hypothesis that the samples are drawn from populations of the same mean.
 
-####*Test 1: 0.5 mg vs 1 mg*    
+####*Example: Test 1: 0.5 mg vs 1 mg* 
+This section explains our general methodology for hypothesis testing. All results will be summarized in table 2.
 $\mu_1$ is the mean of tooth length for the 1 mg group  
 $\mu_2$ is the mean of tooth length for the 0.5 mg group
 $H_0: \mu_1=\mu_2$  
@@ -142,42 +114,35 @@ D2 <- subset(ToothGrowth,dose==2)
 D105 <- subset(ToothGrowth,dose %in% c(1,0.5))
 D12 <- subset(ToothGrowth,dose %in% c(2,1))
 D205 <- subset(ToothGrowth,dose %in% c(2,0.5))
+options(digit=3)
+ttest <- NULL
+ttest <- cbind(t.test(D1$len,D0.5$len,alternative="greater"),
+               t.test(D2$len,D1$len,alternative="greater"),
+               t.test(D2$len,D0.5$len,alternative ="greater")
+               )
+#formatting the data name
+
+colnames(ttest) <- c("Test 1: 0.5 vs 1 mg","Test 2: 1 vs 2 mg", "Test 3: 0.5 vs 2 mg")
+rbind(ttest,c(
+        qt(0.95,ttest[,1]$parameter),
+      qt(0.95,ttest[,2]$parameter),
+      qt(0.95,ttest[,3]$parameter))
+      )
+
 ```
-```{r,results="asis"} 
-```
+
+
 First we will calculate our t-statistics (TS) using the R `t.test` function. For our statistical test we assume an unequal variance and a single sided test. 
 We will reject $H_0$ if $TS \geqslant t_{0.95}$, the $t_{0.95}$ is calculated using `r round(t.test(D1$len,D0.5$len,type="greater")$parameter,2)` as the degree of freedom for unequal variances and provided by the `t.test` function. $t_{0.95}=$ `r round(qt(0.95,round(t.test(D0.5$len,D1$len,type="greater")$parameter,2)),2)`. TS is also provided by the R `t.test` function: TS= `r round(t.test(D1$len,D0.5$len,type="greater")$statistic,2)`. We do have $TS \geqslant t_{0.95}$, and we therefore reject our null hypothesis in favor of the alternate. We conlcude that tooth length is on average greater for the 1mg dose than for the 0.5 mg dose with a 95% confidence. The t-test is summarized in the table below.  
 `r pander(t.test(D1$len,D0.5$len,alternative="greater"))`  
    
-####*Test 2: 0.5 vs 2 mg*  
-$\mu_1$ is the mean of tooth length for the 2 mg group  
-$\mu_2$ is the mean of tooth length for the 0.5 mg group
 
-$H_0: \mu_1=\mu_2$  
-$H_3: \mu_1>\mu_2$  
-Same assumptions as before: unequal variance, group comparison and single sided test, the alternate hypothesis stating that the 2mg dose group mean tooth lenght is greater that the 0.5 mg dose group mean tooth length.  
-`r pander(t.test(D2$len,D0.5$len,alternative="greater"))`  
-The t-value ($t_{0.95}$) with `r round(t.test(D2$len,D0.5$len,alternative="greater")$parameter)` degree of freedom is `r round(qt(0.95,t.test(D2$len,D0.5$len,alternative="greater")$parameter),2)`. The test statistics is greater than $t_{0.95}$ so we can safely reject the null hypothesis. We conlcude that tooth length is on average greater for the 2mg dose than for the 0.5 mg dose with a 95% confidence.  
+```{r} 
+      options(digit=3)
+      
+```
 
-####*Test 3: 1 vs 2 mg*  
-$\mu_1$ is the mean of tooth length for the 2 mg group  
-$\mu_2$ is the mean of tooth length for the 0.5 mg group  
-$H_0: \mu_1=\mu_2$  
-$H_3: \mu_1>\mu_2>0$  
-Asumptions:  
-        *       unequal variance  
-        *       group comparison  
-        *       single sided test  
-    
-`r pander(t.test(D2$len,D1$len,alternative="greater"))`  
-The t-value ($t_{0.95}$) with
-`r round(t.test(D2$len,D1$len,alternative="greater")$parameter)` 
-degree of freedom is 
-`r round(qt(0.95,t.test(D2$len,D1$len,alternative="greater")$parameter),2)`. 
-The test statistics is greater than $t_{0.95}$ so we can safely reject the null
-hypothesis. We conlcude that tooth length is on average greater 
-for the 2mg dose than for the 1mg dose with a 95% confidence.  
-
+`r pander(ttest[c(1,2,3),],digit = 1) `
 ###Hypothesis 2: Mean of delivery has an impact on tooth growth   
 
 ####*Impact of mean of administration on tooth growth across all dose groups*  
@@ -244,7 +209,62 @@ The t-value ($t_{0_95}$) with `r res2$paramter` degree of freedom is `r qt(0.95,
 
 ##Conclusion and notes on assupmtions
 During our analysis we assumed that the samples were iid, the sample variances were considered unequal and we used a confidence level of 95% for all statistical testing. 
-With the statistical rigor of our hypothesis testing we can conclude that:
-*       As the dose of vitamin C increases so does the length of the tooth. Vitamin C has a positive impact on the tooth growth of guinea pig
-*       The mean of admnistration Orange Juice or Ascorbic Acid has an impact on two growth overall. The impact is measurable for the lower dose groups (0.5mg and 1mg) and favors orange juice over ascorbic acid
+With the statistical rigor of our hypothesis testing we can conclude that:  
+*   As the dose of vitamin C increases so does the length of the tooth. Vitamin C has a positive impact on the tooth growth of guinea pig  
+*   The mean of admnistration Orange Juice or Ascorbic Acid has an impact on two growth overall. The impact is measurable for the lower dose groups (0.5mg and 1mg) and favors orange juice over ascorbic acid  
 
+-----
+
+#Appendix
+## Additional Summary Tables 
+From Table 1, we can make the observation that tooth length mean varies by supplement type, the mean is greater for OJ. We will test the hypothesis that the mean observed length of OJ is greater than the mean observed length for VC. So, our hypothesis testing should determine if there's a statistically significant effect of supplement  on tooth length.  
+***
+
+```{r table 1}
+pander(ToothSummarySupp,caption ="Summary statistics for tooth length by supplement",alignment="center") 
+```
+  
+***    
+Table 2 shows that an increase in dose results in an increase in mean tooth lentgh (larger means as dose increases)  
+
+***  
+
+```{r table2}
+        names(ToothSummaryDose)[-1] <- c("n","Mean","Std.Dev","Sample Error")
+        pander(ToothSummaryDose,caption="Summary statistics for tooth length by dose",alignment="center")
+```
+
+***  
+From Table 3 we can formulate the assumption that the mean tooth length is larger at dose levels 0.5 and 1 mg 
+for Orange Juice (OJ) compared to ascorbic acid (VC) but about the same for OJ and VC at dose leve of 2mg
+
+***   
+####*Test 2: 0.5 vs 2 mg*  
+$\mu_1$ is the mean of tooth length for the 2 mg group  
+$\mu_2$ is the mean of tooth length for the 0.5 mg group
+
+$H_0: \mu_1=\mu_2$  
+$H_3: \mu_1>\mu_2$  
+Same assumptions as before: unequal variance, group comparison and single sided test, the alternate hypothesis stating that the 2mg dose group mean tooth lenght is greater that the 0.5 mg dose group mean tooth length.  
+`r pander(t.test(D2$len,D0.5$len,alternative="greater"))`  
+The t-value ($t_{0.95}$) with `r round(t.test(D2$len,D0.5$len,alternative="greater")$parameter)` degree of freedom is `r round(qt(0.95,t.test(D2$len,D0.5$len,alternative="greater")$parameter),2)`. The test statistics is greater than $t_{0.95}$ so we can safely reject the null hypothesis. We conlcude that tooth length is on average greater for the 2mg dose than for the 0.5 mg dose with a 95% confidence.  
+
+####*Test 3: 1 vs 2 mg*  
+$\mu_1$ is the mean of tooth length for the 2 mg group  
+$\mu_2$ is the mean of tooth length for the 0.5 mg group  
+$H_0: \mu_1=\mu_2$  
+$H_3: \mu_1>\mu_2>0$  
+Asumptions:  
+
+* unequal variance  
+* group comparison  
+* single sided test  
+    
+`r pander(t.test(D2$len,D1$len,alternative="greater"))`  
+The t-value ($t_{0.95}$) with
+`r round(t.test(D2$len,D1$len,alternative="greater")$parameter)` 
+degree of freedom is 
+`r round(qt(0.95,t.test(D2$len,D1$len,alternative="greater")$parameter),2)`. 
+The test statistics is greater than $t_{0.95}$ so we can safely reject the null
+hypothesis. We conlcude that tooth length is on average greater 
+for the 2mg dose than for the 1mg dose with a 95% confidence.  
