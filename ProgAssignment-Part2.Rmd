@@ -15,8 +15,8 @@ panderOptions('digits',2)
 panderOptions('round',2)
 ```
 
-##Introduction
-We propose to analyze the length of odontoblasts for 60 guinea pigs that have received one of three dose levels of Vitamin C by of of two delivery methods (orange juice OJ) or ascorbic acid (VC). We will first perform some exploratory data analysis to generate some hypothesis that we will be statistically tested.  
+##Overview
+We propose to analyze the length of odontoblasts for 60 guinea pigs that have received one of three dose levels of Vitamin C by of of two delivery methods (orange juice OJ) or ascorbic acid (VC). We are trying to assert if Vitamin C effect the tooth growth of guinea pigs and if it does, does the mean of administration impact the growth.   
 
 ##Exploratory Data Analysis 
 
