@@ -1,24 +1,10 @@
 ---
-title: 'A study of sample mean and variance statistics for the exponential distribution as convergent estimates for population parameters using R simulation'
+title: A study of sample mean and variance statistics for the exponential distribution
+  as convergent estimates for population parameters using R simulation
 author: "Jean-Remy Behaeghel"
 date: "September 16, 2016"
-output: html_document
+output: pdf_document
 ---
-The assignment:
-Sample Project Report Structure
-
-Of course, there are multiple ways one could structure a report to address the requirements above. However, the more clearly you pose and answer each question, the easier it will be for reviewers to clearly identify and evaluate your work.
-
-A sample set of headings that could be used to guide the creation of your report might be:
-
-Title (give an appropriate title) and Author Name
-Overview: In a few (2-3) sentences explain what is going to be reported on.
-Simulations: Include English explanations of the simulations you ran, with the accompanying R code. Your explanations should make clear what the R code accomplishes.
-Sample Mean versus Theoretical Mean: Include figures with titles. In the figures, highlight the means you are comparing. Include text that explains the figures and what is shown on them, and provides appropriate numbers.
-Sample Variance versus Theoretical Variance: Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.
-Distribution: Via figures and text, explain how one can tell the distribution is approximately normal.
-#PART 1: Simulation 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(dplyr);library(knitr);library(pander);library(ggplot2)
@@ -26,38 +12,34 @@ panderOptions('digits',2)
 panderOptions('round',2)
 ```
 #Overview  
-In this report we will draw 1000 samples of 40 exponentials. We will evaluate the sample mean and sample variance of those sample against the theoretical mean and variance. Lastly we will compare the distribution of the samples and variance means against a normal distribution and attempt the verify the central limit theorem.  
+In this report we will draw 1000 samples of 40 exponentials. We will evaluate the sample mean and sample variance of those sample against the theoretical mean and variance. Lastly we will compare the distribution of the samples and variance means against a normal distribution and attempt to verify the central limit theorem. We assume iid random vairables and that the sample mean and sample variance of iid random variables are consistent;they converge to the population mean and population variance.  
 
 #Simulation
 The simulation code is straight forward, we will draw 40 exponentials using `rexp` with a parameter $\lambda$ = 0.2 and calculate its mean, repeat the draw and sample mean calculation a 1,000 times. Each calculated mean will be stored in a result vector. We can then use the result vector for the remainder of the exercise. The simulation vectore will contains 1000 samples of size 40 of exponentials.
 
 
 
-Sample mean and sample variance of iid random variables are consistent... they converge to the population mean and population variance
-````{r simpleSim, echo=TRUE}
-set.seed(100) ## So we can repeat the experience with the same reuslts
-lambda <- 0.2 ##Parameter for the exponential distribution
+
+````{r simpleSim, echo=TRUE,tidy=TRUE}
+set.seed(100) # So we can repeat the experience with the same reuslts
+lambda <- 0.2 #Parameter for the exponential distribution
 n <- 40 #sample size
 nsims <- 1000 # number of simulations to run
-mns <- NULL
-vars <- NULL
+mns <- NULL # initiating variables
+vars <- NULL # initiating variables
 for (i in 1:nsims) {sam <- rexp(n,lambda); mns <- c(mns,mean(sam));vars<-c(vars,var(sam))} #running the simulation
-dfsim <- data.frame(mns,vars) ## create a data frame with two columns, one for the means and one for the vars
+dfsim <- data.frame(mns,vars) #create a data frame with two columns,
+                              #one for the means and one for the vars
 colnames(dfsim) <- c("mns","vars")
-# hist(mns)
-# abline(v=mean(mns),col="red",lwd=7)
-# abline(v=1/lambda,col="blue",lwd=7)
-# hist(vars)
-# abline(v=mean(vars),col="red",lwd=7)
-# abline(v=(1/lambda)^2,col="blue",lwd=7)
-#samplevar = sd(mns)
+
 ````
-## Sample mean and theoretical mean  
+##Sample mean and theoretical mean  
+
 
 We will first plot the sample means as an histogram and density function.  
 ```{r Graphing the mean, echo=FALSE}
 gmns <- ggplot(data=dfsim,aes(x=mns,y=..density..))
-gmns <- gmns + geom_histogram(binwidth=0.5, fill=I("cornsilk"), color="grey60") + 
+gmns <- gmns + geom_histogram(binwidth=0.1, fill=I("cornsilk"), color="grey60") + 
                geom_density(color="blue")
 gmns <- gmns + theme_minimal()
 gmns <- gmns + ggtitle("Histogram of Sample Means for Exponetials \n (1000 sample means from samples of size 40)")
@@ -66,5 +48,25 @@ gmns <- gmns + geom_vline(xintercept=mean(mns),color="red",linetype="dotdash",si
 print(gmns)
 ```
 
-The sample mean is `r round(mean(mns),2)`.  
-The population mean is `r round(1/lambda,2)`
+The dotted dash line represents the mean of the sample means and the solid black line represent the theorectical mean $1/\lambda$. In the graph they apperar very close to each other. This is confirmed by the numerical values: sample mean is `r mean(mns)` where the therorical mean is `r 1/lambda`. This result is supporting the law of large numbers conclusions. The sample mean is a random variable which expected value (mean) converge to the mean of the population.
+
+The density plot overlaying the histogram tends to take a symetric bell shape curve centered around the mean of the sample means. This would indicate a
+normal distribution of the sample mean random variable as predicted by the center limit theorem.
+
+  
+##Sample variance and theoretical variance
+```{r Graphing the variance, echo=FALSE}
+gmns <- ggplot(data=dfsim,aes(x=vars,y=..density..))
+gmns <- gmns + geom_histogram(binwidth=1, fill=I("cornsilk"), color="grey60") + 
+               geom_density(color="blue")
+gmns <- gmns + theme_minimal()
+gmns <- gmns + ggtitle("Histogram of Sample Variances for Exponentials \n (1000 sample variances from samples of size 40)")
+gmns <- gmns + xlab("Variance") + ylab("")
+gmns <- gmns + geom_vline(xintercept=mean(vars),color="red",linetype="dotdash",size=2) + geom_vline(xintercept=(1/lambda)^2,size=1)
+print(gmns)
+```
+
+The dotted dash line represents the mean of the sample variances and the solid black line represent the theorectical variance $1/\lambda$. In the graph they apperar very close to each other. This is confirmed by the numerical values: sample variance is `r mean(vars)` where the therorical variance is `r (1/lambda^2)`. This result is supporting the law of large numbers conclusions. The variance is a random variable which expected value (mean) converge to the value it is estimating, in this case the variance.  
+
+The density plot overlaying the histogram for the variancemay eventually converge to a bell shape curve but with the limited number of simulations we have ran, it's still has a pretty long right tail. However, the density is centered around the mean and seems to be symetric. This should trend toward a normal curve with a higher number of simulations. 
+
