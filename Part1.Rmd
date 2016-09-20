@@ -39,12 +39,12 @@ colnames(dfsim) <- c("mns","vars")
 We will first plot the sample means as an histogram and density function.  
 ```{r Graphing the mean, echo=FALSE}
 gmns <- ggplot(data=dfsim,aes(x=mns,y=..density..))
-gmns <- gmns + geom_histogram(binwidth=0.1, fill=I("cornsilk"), color="grey60") + 
-               geom_density(color="blue")
+gmns <- gmns + geom_histogram(binwidth=0.1, fill=I("cornsilk"), color="grey60") 
 gmns <- gmns + theme_minimal()
 gmns <- gmns + ggtitle("Histogram of Sample Means for Exponetials \n (1000 sample means from samples of size 40)")
 gmns <- gmns + xlab("mean") + ylab("")
-gmns <- gmns + geom_vline(xintercept=mean(mns),color="red",linetype="dotdash",size=2) + geom_vline(xintercept=1/lambda,size=1)
+gmns <- gmns + geom_vline(xintercept=mean(mns),color="red",linetype="dotdash",size=2) + geom_vline(xintercept=1/lambda,size=1) 
+gmns <- gmns + stat_function(fun=dnorm, args=list(mean=mean(dfsim$mns), sd=sd(dfsim$mns)))
 print(gmns)
 ```
 

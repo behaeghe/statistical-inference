@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "## ----setup, include=FALSE------------------------------------------------\nknitr::opts_chunk$set(echo = FALSE)\nlibrary(dplyr);library(knitr);library(pander)\npanderOptions('digits',2)\npanderOptions('round',2)\n\n#\n\n## ----load dataset and some basic plotting, echo=FALSE,fig.align='center'----\ndata(\"ToothGrowth\")\n\nlibrary(ggplot2)\ng <- ggplot(\n                data=ToothGrowth,\n                aes(x=interaction(supp,dose),y=len)\n                )\ng + geom_violin(\n                aes(fill=supp),\n                scale=\"area\") + \n    stat_summary(fun.data =\"mean_se\",\n                 colour=\"white\") + \n    scale_fill_brewer(palette=\"Blues\") + \n    theme_minimal() + \n    geom_boxplot(width=0.1) +\n    ggtitle(\"Tooth length by dose and supplement\") +\n    xlab(\"Supplement and Dose\") +\n    ylab(\"Length\")\n\n## ----stats, echo=FALSE---------------------------------------------------\n        tbTooth <- tbl_df(ToothGrowth)\n        ToothSummaryAll <- tbTooth %>% \n                        group_by(dose,supp) %>% \n                        summarise( \n                                n(),\n                                mn =mean(len),\n                                s=round(sd(len),2),\n                                sem=round(sd(len)/sqrt(n()),2)\n                                )\n        ToothSummaryDose <- tbTooth %>% \n                        group_by(dose) %>% \n                        summarise( \n                                n(),\n                                mn =mean(len),\n                                s=round(sd(len),2),\n                                sem=round(sd(len)/sqrt(n()),2)\n                                )\n        ToothSummarySupp <- tbTooth %>% \n                        group_by(supp) %>% \n                        summarise( \n                                n(),\n                                mn =mean(len),\n                                s=round(sd(len),2),\n                                sem=round(sd(len)/sqrt(n()),2)\n                                )\n\n## ----table1--------------------------------------------------------------\n        names(ToothSummarySupp)[-1] <- c(\"n\",\"Mean\",\"Std.Dev\",\"Sample Error\")\n        pander(ToothSummarySupp,caption=\"Summary statistics for tooth length by supplement\",alignment=\"center\") \n\n## ----table2--------------------------------------------------------------\n        names(ToothSummaryDose)[-1] <- c(\"n\",\"Mean\",\"Std.Dev\",\"Sample Error\")\n        pander(ToothSummaryDose,caption=\"Summary statistics for tooth length by dose\",alignment=\"center\",justify=\"right\")\n\n## ----table3--------------------------------------------------------------\n        names(ToothSummaryAll)[-(1:2)] <- c(\"n\",\"Mean\",\"Std.Dev\",\"Sample Error\")\n        pander(ToothSummaryAll,caption=\"Summary Statistics for tooth length by dose and supplement\",alignment=c(\"center\"))\n\n",
+    "created" : 1473889161918.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2555156905",
+    "id" : "7D3A826E",
+    "lastKnownWriteTime" : 1473889256,
+    "last_content_update" : 1473889256629,
+    "path" : "~/Documents/Coursera/Statistical-Inference/ProgAssignment.R",
+    "project_path" : "ProgAssignment.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
